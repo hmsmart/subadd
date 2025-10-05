@@ -14,21 +14,21 @@ The script works by checking the episode number (E##) extracted from the video f
 
 ## Prerequisites
 
-    Bash shell environment (Linux, macOS, WSL).
+Bash shell environment (Linux, macOS, WSL).
 
-    The video files (currently .mkv) must follow a consistent episode naming pattern that includes the season and episode number, such as: ...S01E01...
+The video files (currently .mkv) must follow a consistent episode naming pattern that includes the season and episode number, such as: ...S01E01...
 
 ## Usage
 
 To run the script, execute it from your terminal, providing three mandatory arguments:
 
-    1. The Source Directory containing the raw, unnamed subtitle files.
+1. The Source Directory containing the raw, unnamed subtitle files.
 
-    2. The Destination Directory containing the video files whose names the subtitles should match.
+2. The Destination Directory containing the video files whose names the subtitles should match.
 
-    3. The Language ISO Code (e.g., jpn, eng, fre).
+3. The Language ISO Code (e.g., jpn, eng, fre).
 
-```bash
+```console
 ./subadd.sh <SUBTITLE_SOURCE_DIR> <VIDEO_DESTINATION_DIR> <LANG_ISO_CODE>
 ```
 
@@ -36,13 +36,13 @@ To run the script, execute it from your terminal, providing three mandatory argu
 
 Suppose you have:
 
-    Subtitles in: ./Food Court de, Mata Ashita/
+Subtitles in: ./Food Court de, Mata Ashita/
 
-    Videos in: /mnt/media/Anime/See You Tomorrow at the Food Court (2025)/Season 01/
+Videos in: /mnt/media/Anime/See You Tomorrow at the Food Court (2025)/Season 01/
 
 To match the Japanese subtitles to the videos in the destination directory:
 
-```bash
+```console
 ./subadd.sh "Food Court de, Mata Ashita" "/mnt/media/Anime/See You Tomorrow at the Food Court (2025)/Season 01/" "jpn"
 ```
 
