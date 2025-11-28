@@ -87,7 +87,7 @@ for mkv_path in "$DSTDIR"/*.mkv; do
     if [[ "$mkv_file" =~ -[[:space:]]S01E([0-9]{2})[[:space:]]- ]]; then
         EPISODE_NUMBER="${BASH_REMATCH[1]}"
         
-        # 3. Construct the three specific patterns for the original subtitle file
+        # 3. Construct the four specific patterns for the original subtitle file
         
         # Pattern 1 (Loose Space/End of title): Matches titles like '... 01.ass' or '... 01 .ass'
         PATTERN_1="$SUBDIR/* ${EPISODE_NUMBER}*."@(srt|ass)
@@ -97,8 +97,11 @@ for mkv_path in "$DSTDIR"/*.mkv; do
 
         # Pattern 3 (Curly Braces): Matches titles like '...{03}[Source].ass'
         PATTERN_3="$SUBDIR/*{${EPISODE_NUMBER}}*."@(srt|ass)
+
+        # Pattern 4 (Episode format): Matches titles like '...S01E02...' or '...E02...'
+        PATTERN_4="$SUBDIR/*E${EPISODE_NUMBER}*."@(srt|ass)
         
-        # 4. Find the matching subtitle file path in the source directory
+        # 5. Find the matching subtitle file path in the source directory
         # Use compgen -G with double-quotes to prevent errors.
         
         # Attempt to find the pattern 1 match
@@ -110,6 +113,9 @@ for mkv_path in "$DSTDIR"/*.mkv; do
         # Attempt to find the pattern 3 match
         SRT_FILE_MATCH_3=$(compgen -G "$PATTERN_3" | head -n 1)
 
+        # Attempt to find the pattern 4 match
+        SRT_FILE_MATCH_4=$(compgen -G "$PATTERN_4" | head -n 1)
+
         # Choose the first one that actually found a file
         srt_file_path=""
         if [[ -n "$SRT_FILE_MATCH_1" ]]; then
@@ -118,6 +124,8 @@ for mkv_path in "$DSTDIR"/*.mkv; do
             srt_file_path="$SRT_FILE_MATCH_2"
         elif [[ -n "$SRT_FILE_MATCH_3" ]]; then
             srt_file_path="$SRT_FILE_MATCH_3"
+        elif [[ -n "$SRT_FILE_MATCH_4" ]]; then
+            srt_file_path="$SRT_FILE_MATCH_4"
         fi
 
         if [[ -n "$srt_file_path" ]]; then
@@ -149,7 +157,7 @@ for mkv_path in "$DSTDIR"/*.mkv; do
                 echo "✅ Renamed and Moved Episode $EPISODE_NUMBER: $new_name"
             fi
         else
-            echo "⚠️ Warning: Could not find matching SRT/ASS file for episode $EPISODE_NUMBER in '$SUBDIR'. Tried patterns: * ${EPISODE_NUMBER}*, *[${EPISODE_NUMBER}]*, and *{${EPISODE_NUMBER}}*."
+            echo "⚠️ Warning: Could not find matching SRT/ASS file for episode $EPISODE_NUMBER in '$SUBDIR'. Tried patterns: * ${EPISODE_NUMBER}*, *[${EPISODE_NUMBER}]*, *{${EPISODE_NUMBER}}*, and *E${EPISODE_NUMBER}*."
         fi
     else
         echo "⚠️ Warning: Skipping '$mkv_file'. Could not extract episode number (looking for S01E##)."
