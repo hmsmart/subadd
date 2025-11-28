@@ -29,8 +29,17 @@ To run the script, execute it from your terminal, providing three mandatory argu
 3. The Language ISO Code (e.g., jpn, eng, fre).
 
 ```console
-./subadd.sh <SUBTITLE_SOURCE_DIR> <VIDEO_DESTINATION_DIR> <LANG_ISO_CODE>
+./subadd.sh [-c|--copy] [-r] <SUBTITLE_SOURCE_DIR> <VIDEO_DESTINATION_DIR> <LANG_ISO_CODE>
 ```
+
+### Options
+
+| Option        | Description                                                        |
+| ------------- | ------------------------------------------------------------------ |
+| `-c, --copy`  | Copy subtitles to destination instead of moving                    |
+| `-r`          | Rename original subtitle in source folder to match destination naming |
+| `-cr, -rc`    | Combine copy and rename original (both actions)                    |
+| `-h, --help`  | Show help message                                                  |
 
 ### Example
 
@@ -44,6 +53,25 @@ To match the Japanese subtitles to the videos in the destination directory:
 
 ```console
 ./subadd.sh "Food Court de, Mata Ashita" "/mnt/media/Anime/See You Tomorrow at the Food Court (2025)/Season 01/" "jpn"
+```
+
+### Copy and Rename Example
+
+To copy subtitles to destination and also rename the original files in the source folder:
+
+```console
+./subadd.sh -cr "Subin" "DstDir" "ja"
+```
+
+**Input:**
+```
+Subin/[Nekomoe kissaten] Apocalypse Hotel - 12 [WebRip][JPN].ass
+```
+
+**Output:**
+```
+Subin/Apocalypse Hotel (2025) - S01E12 - 012 - Title [Bluray-1080p Remux][8bit][h264][FLAC 2.0][JA]-LaCroiX.ja.ass
+DstDir/Apocalypse Hotel (2025) - S01E12 - 012 - Title [Bluray-1080p Remux][8bit][h264][FLAC 2.0][JA]-LaCroiX.ja.ass
 ```
 
 ### Output

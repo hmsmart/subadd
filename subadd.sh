@@ -4,12 +4,49 @@
 # to match MKV files in a destination directory (dstdir) 
 # and add a language ISO code to the extension.
 #
-# Usage: ./subadd.sh <subdir_of_srtList> <dstdir_of_mkv> <langiso>
+# Usage: ./subadd.sh [-c|--copy] [-r] <subdir_of_srtList> <dstdir_of_mkv> <langiso>
+
+# --- Default Options ---
+COPY_MODE=false
+RENAME_ORIGINAL=false
+
+# --- Parse Options ---
+while [[ "$1" == -* ]]; do
+    case "$1" in
+        -c|--copy)
+            COPY_MODE=true
+            shift
+            ;;
+        -r)
+            RENAME_ORIGINAL=true
+            shift
+            ;;
+        -cr|-rc)
+            COPY_MODE=true
+            RENAME_ORIGINAL=true
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: $0 [-c|--copy] [-r] <subdir_of_srtList> <dstdir_of_mkv> <langiso>"
+            echo ""
+            echo "Options:"
+            echo "  -c, --copy    Copy subtitles to destination instead of moving"
+            echo "  -r            Rename original subtitle in source folder to match destination naming"
+            echo "  -h, --help    Show this help message"
+            exit 0
+            ;;
+        *)
+            echo "❌ Error: Unknown option '$1'"
+            echo "Usage: $0 [-c|--copy] [-r] <subdir_of_srtList> <dstdir_of_mkv> <langiso>"
+            exit 1
+            ;;
+    esac
+done
 
 # --- Input Validation ---
 if [ "$#" -ne 3 ]; then
     echo "❌ Error: Illegal number of parameters."
-    echo "Usage: $0 <subdir_of_srtList> <dstdir_of_mkv> <langiso>"
+    echo "Usage: $0 [-c|--copy] [-r] <subdir_of_srtList> <dstdir_of_mkv> <langiso>"
     exit 1
 fi
 
@@ -21,6 +58,8 @@ echo "--- Subtitle Rename Utility ---"
 echo "Subtitle Source: $SUBDIR"
 echo "Video Destination: $DSTDIR"
 echo "Language ISO Code: $LANGISO"
+echo "Copy Mode: $COPY_MODE"
+echo "Rename Original: $RENAME_ORIGINAL"
 echo "-------------------------------"
 
 # Ensure directories exist
@@ -90,10 +129,25 @@ for mkv_path in "$DSTDIR"/*.mkv; do
             new_base_name="${mkv_file%.mkv}"
             new_name="${new_base_name}${NEW_EXT}"
 
-            # 7. Perform the rename and move operation
-            mv "$srt_file_path" "$DSTDIR/$new_name"
-            
-            echo "✅ Renamed and Moved Episode $EPISODE_NUMBER: $new_name"
+            # 7. Perform the file operation based on flags
+            if [[ "$COPY_MODE" == true ]] || [[ "$RENAME_ORIGINAL" == true ]]; then
+                # Copy to destination (needed for both -c and -r modes)
+                cp "$srt_file_path" "$DSTDIR/$new_name"
+                
+                if [[ "$RENAME_ORIGINAL" == true ]]; then
+                    # Rename the original in place
+                    mv "$srt_file_path" "$SUBDIR/$new_name"
+                    echo "✅ Copied and Renamed Original Episode $EPISODE_NUMBER:"
+                    echo "   Source: $SUBDIR/$new_name"
+                    echo "   Destination: $DSTDIR/$new_name"
+                else
+                    echo "✅ Copied Episode $EPISODE_NUMBER: $new_name"
+                fi
+            else
+                # Default behavior: move to destination
+                mv "$srt_file_path" "$DSTDIR/$new_name"
+                echo "✅ Renamed and Moved Episode $EPISODE_NUMBER: $new_name"
+            fi
         else
             echo "⚠️ Warning: Could not find matching SRT/ASS file for episode $EPISODE_NUMBER in '$SUBDIR'. Tried patterns: * ${EPISODE_NUMBER}*, *[${EPISODE_NUMBER}]*, and *{${EPISODE_NUMBER}}*."
         fi
