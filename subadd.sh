@@ -93,7 +93,7 @@ for mkv_path in "$DSTDIR"/*.mkv; do
         PATTERN_1="$SUBDIR/* ${EPISODE_NUMBER}*."@(srt|ass)
         
         # Pattern 2 (Bracketed): Matches titles like '...[02][Source].ass'
-        PATTERN_2="$SUBDIR/*[${EPISODE_NUMBER}]*."@(srt|ass)
+        PATTERN_2="$SUBDIR/*[[]${EPISODE_NUMBER}[]]*."@(srt|ass)
 
         # Pattern 3 (Curly Braces): Matches titles like '...{03}[Source].ass'
         PATTERN_3="$SUBDIR/*{${EPISODE_NUMBER}}*."@(srt|ass)
