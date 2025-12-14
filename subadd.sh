@@ -83,8 +83,8 @@ for mkv_path in "$DSTDIR"/*.mkv; do
     mkv_file=$(basename "$mkv_path")
     
     # 2. Extract the episode number (e.g., '01', '02') from the MKV filename
-    # Looks for '- S01E## -' where ## is two digits
-    if [[ "$mkv_file" =~ -[[:space:]]S01E([0-9]{2})[[:space:]]- ]]; then
+    # Looks for '- S##E## -' where ## is two digits for both season and episode
+    if [[ "$mkv_file" =~ -[[:space:]]S[0-9]{2}E([0-9]{2})[[:space:]]- ]]; then
         EPISODE_NUMBER="${BASH_REMATCH[1]}"
         
         # 3. Construct the four specific patterns for the original subtitle file
@@ -160,7 +160,7 @@ for mkv_path in "$DSTDIR"/*.mkv; do
             echo "⚠️ Warning: Could not find matching SRT/ASS file for episode $EPISODE_NUMBER in '$SUBDIR'. Tried patterns: * ${EPISODE_NUMBER}*, *[${EPISODE_NUMBER}]*, *{${EPISODE_NUMBER}}*, and *E${EPISODE_NUMBER}*."
         fi
     else
-        echo "⚠️ Warning: Skipping '$mkv_file'. Could not extract episode number (looking for S01E##)."
+        echo "⚠️ Warning: Skipping '$mkv_file'. Could not extract episode number (looking for S##E##)."
     fi
 done
 
